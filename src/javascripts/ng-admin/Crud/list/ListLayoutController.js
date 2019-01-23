@@ -14,6 +14,8 @@ export default class ListLayoutController {
         this.loadingPage = false;
         this.filters = view.filters();
         this.search = ListLayoutController.getCurrentSearchParam($location, this.filters);
+        this.cursor = $location.search().cursor;
+        this.cursorHistory = $location.search().cursorHistory;
         this.path = $location.path();
         // since search isn't a $stateParam of the listLayout state,
         // the controller doesn't change when the search changes
@@ -36,6 +38,24 @@ export default class ListLayoutController {
             () => this.search,
             debounce((newValues, oldValues) => {
                 if (newValues != oldValues) {
+                    this.cursor = null;
+                    this.cursorHistory = { "cursors": [ { "cursor": null, "count" : 0}] };
+                    this.page = 1;
+
+                    this.updateFilters();
+                }
+            }, 500),
+            true
+        );
+        // reset page and cursor sort direction changes
+        $scope.$watch(
+            () => $location.search() && $location.search().sortDir,
+            debounce((newValues, oldValues) => {
+                if (newValues != oldValues) {
+                    this.cursor = null;
+                    this.cursorHistory = { "cursors": [ { "cursor": null, "count" : 0}] };
+                    this.page = 1;
+
                     this.updateFilters();
                 }
             }, 500),
@@ -119,9 +139,10 @@ export default class ListLayoutController {
             }
         }
         this.$stateParams.search = values;
-        this.$stateParams.page = 1;
-        this.$stateParams.cursor = null; // this is first page
-        this.$stateParams.nextCursor = null; // we may or may not have next page
+        // update cursor data to what have been passed in the URL
+        this.$stateParams.page = this.page;
+        this.$stateParams.cursor = this.cursor;
+        this.$stateParams.cursorHistory = this.cursorHistory;
         this.$state.go('list', this.$stateParams);
     }
 

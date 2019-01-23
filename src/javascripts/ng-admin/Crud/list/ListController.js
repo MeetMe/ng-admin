@@ -1,10 +1,11 @@
 import Entry from 'admin-config/lib/Entry';
 
 export default class ListController {
-    constructor($scope, $stateParams, $location, $anchorScroll, ReadQueries, progression, view, dataStore, totalItems, currentCursor, nextCursor) {
+    constructor($scope, $stateParams, $location, $anchorScroll, $compile, ReadQueries, progression, view, dataStore, pageItems, totalItems, currentCursor, nextCursor) {
         this.$scope = $scope;
         this.$stateParams = $stateParams;
         this.$location = $location;
+        this.$compile = $compile;
         this.$anchorScroll = $anchorScroll;
         this.ReadQueries = ReadQueries;
         this.progression = progression;
@@ -15,6 +16,7 @@ export default class ListController {
         this.dataStore = dataStore;
         this.fields = view.fields();
         this.listActions = view.listActions();
+        this.pageItems = pageItems;
         this.totalItems = totalItems;
         this.page = $stateParams.page || 1;
         this.currentCursor = currentCursor;
@@ -102,7 +104,6 @@ export default class ListController {
             });
     }
 
-
     setCursor(cursor) {
         this.$location.search('cursor', cursor);
         this.$anchorScroll(0);
@@ -122,4 +123,4 @@ export default class ListController {
     }
 }
 
-ListController.$inject = ['$scope', '$stateParams', '$location', '$anchorScroll', 'ReadQueries', 'progression', 'view', 'dataStore', 'totalItems', 'currentCursor', 'nextCursor'];
+ListController.$inject = ['$scope', '$stateParams', '$location', '$anchorScroll', '$compile', 'ReadQueries', 'progression', 'view', 'dataStore', 'pageItems', 'totalItems', 'currentCursor', 'nextCursor'];

@@ -1,15 +1,20 @@
 <nav class="pagination-bar">
-    <div class="total no-record" ng-if="!paginationCtrl.displayPagination">
+    <div class="total no-record" ng-if="paginationCtrl.totalItems == 0">
         <strong translate="NO_PAGINATION"></strong>
     </div>
 
-    <div class="total" ng-if="paginationCtrl.displayPagination">
-        from: <strong>{{paginationCtrl.currentCursor || 'first' }}</strong> to: <strong>{{paginationCtrl.nextCursor || 'no more pages'}}</strong>, rows on this page: <strong>{{paginationCtrl.totalItems}}</strong>
+    <div class="total" ng-if="paginationCtrl.totalItems > 0" translate="PAGINATION" translate-values="{ begin: paginationCtrl.offsetBegin, end: paginationCtrl.offsetEnd, total: paginationCtrl.totalItemsDisplay }">
     </div>
 
     <ul class="pagination pagination-sm pull-right" role="group" aria-label="pagination" ng-if="paginationCtrl.displayPagination">
-        <li><a href ng-if="paginationCtrl.currentCursor" ng-click="paginationCtrl.firstPage()" translate="First"></a></li>
-        <li><a href ng-if="paginationCtrl.currentCursor" ng-click="paginationCtrl.back()" translate="PREVIOUS"></a></li>
+        <li><a href ng-if="paginationCtrl.currentCursor" ng-click="paginationCtrl.setCursorIndex(paginationCtrl.cursorPage - 1)" translate="PREVIOUS"></a></li>
+        <li ng-repeat="n in paginationCtrl.range(paginationCtrl.cursorPage) track by $index" ng-class="{'active': n == paginationCtrl.cursorPage}">
+            <a href ng-if="n != '.'" ng-click="paginationCtrl.setCursorIndex(n)">{{ n }}</a>
+            <span ng-if="n == '.'">&hellip;</span>
+        </li>
         <li><a href ng-if="paginationCtrl.nextCursor" ng-click="paginationCtrl.nextPage()" translate="NEXT"></a></li>
+        <li>
+            <a href style="margin-left: 20px" ng-click="paginationCtrl.resetCursor()" class="fa fa-refresh"></a>
+        </li>
     </ul>
 </nav>
